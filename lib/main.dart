@@ -35,15 +35,20 @@ class HeroState extends State<HeroList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Heroes (Choose two Heroes to fight)', style: TextStyle(fontSize: 15.0)), actions: <Widget>[
-        new FlatButton(
-          child: Text(
-            "Fight",
-            style: const TextStyle(fontSize: 20.0, color: Colors.white),
-          ),
-          onPressed: _showFight,
-        )
-      ]),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(55.0),
+          child: AppBar(
+              title: Text('Heroes \n(Choose two Heroes to fight)',
+                  style: TextStyle(fontSize: 15.0)),
+              actions: <Widget>[
+                new FlatButton(
+                  child: Text(
+                    "Fight",
+                    style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                  ),
+                  onPressed: _showFight,
+                )
+              ])),
       body: _buildHeroes(),
     );
   }
@@ -108,32 +113,114 @@ class HeroState extends State<HeroList> {
     );
   }
 
+  /*
+  Widget _buildHeroes() {
+    return ListView.builder(
+        itemCount: 30,
+        itemBuilder: (context, index) {
+          return FutureBuilder(
+            future: generateHero(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return _buildRow(snapshot.data);
+                  }
+              }
+            },
+          );
+        });
+  }*/
+
   Widget _buildRow(Hero hero) {
     final bool alreadySaved = fighter.contains(hero);
+    final font = const TextStyle(fontSize: 20.0, color: Colors.white);
     return ListTile(
-      leading: ClipOval(
-        child: Image.network(
-          hero.image,
-          width: 70,
-          height: 50,
-          fit: BoxFit.cover,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return Container(
+                      margin: EdgeInsets.only(top: 80.0),
+                      padding: EdgeInsets.all(10.0),
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text(
+                                  'Intelligence: ' +
+                                      hero.powerstats['intelligence'],
+                                  style: font)),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text('Power: ' + hero.powerstats['power'],
+                                  style: font)),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text(
+                                  'Durability: ' +
+                                      hero.powerstats['durability'],
+                                  style: font)),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text('Speed: ' + hero.powerstats['speed'],
+                                  style: font)),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text(
+                                  'Strength: ' + hero.powerstats['strength'],
+                                  style: font)),
+                          Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                              child: Text(
+                                  'Combat: ' + hero.powerstats['combat'],
+                                  style: font)),
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit
+                                  .contain, // otherwise the logo will be tiny
+                              child: Image.network(
+                                hero.image,
+                                width: 70,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ));
+                },
+              ),
+            );
+          },
+          child: ClipOval(
+              child: Image.network(
+            hero.image,
+            width: 70,
+            height: 50,
+            fit: BoxFit.cover,
+          )),
         ),
-      ),
-      title: Text(hero.name, style: _biggerFont),
-        trailing: Icon(   // Add the lines from here...
+        title: Text(hero.name, style: _biggerFont),
+        trailing: Icon(
           alreadySaved ? Icons.add_circle : Icons.add_circle_outline,
-          color: alreadySaved ? Colors.black : null,
         ),
-      onTap: () {      // Add 9 lines from here...
-        setState(() {
-          if (alreadySaved) {
-            fighter.remove(hero);
-          } else if (fighter.length < 2) {
-            fighter.add(hero);
-          }
+        onTap: () {
+          setState(() {
+            if (alreadySaved) {
+              fighter.remove(hero);
+            } else if (fighter.length < 2) {
+              fighter.add(hero);
+            }
+          });
         });
-      },
-    );
   }
 }
 
@@ -181,9 +268,19 @@ class Hero {
     String power = keys[randomPower];
     if (int.parse(this.powerstats[power]) >
         int.parse(opponent.powerstats[power])) {
-      return this.name + ' won the fight! With '+this.powerstats[power]+' '+power;
+      return this.name +
+          ' won the fight! With ' +
+          this.powerstats[power] +
+          ' ' +
+          power +
+          '.';
     } else {
-      return opponent.name + ' won the fight! With '+opponent.powerstats[power]+' '+power;
+      return opponent.name +
+          ' won the fight! With ' +
+          opponent.powerstats[power] +
+          ' ' +
+          power +
+          '.';
     }
   }
 
