@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/grippberger/AndroidStudioProjects/hero_app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/Users/grippberger/Desktop/hero-app/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
-                    "source": "/Users/grippberger/AndroidStudioProjects/hero_app/android/app/src/main/res/values/styles.xml",
+                    "source": "/Users/grippberger/Desktop/hero-app/android/app/src/main/res/values/styles.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
