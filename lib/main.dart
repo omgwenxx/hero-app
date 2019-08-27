@@ -266,18 +266,34 @@ class Hero {
     int randomPower = new Random().nextInt(5);
     List<String> keys = this.powerstats.keys.toList();
     String power = keys[randomPower];
-    if (int.parse(this.powerstats[power]) >
-        int.parse(opponent.powerstats[power])) {
+    var heroPower = this.powerstats[power];
+    var opponentPower = opponent.powerstats[power];
+
+    if (heroPower == 'null') {
+      heroPower = 0;
+    } else {
+      heroPower = int.parse(this.powerstats[power]);
+    }
+
+    if (opponentPower == 'null') {
+      opponentPower = 0;
+    } else {
+      opponentPower = int.parse(opponent.powerstats[power]);
+    }
+
+    if (heroPower > opponentPower) {
       return this.name +
           ' won the fight! With ' +
-          this.powerstats[power] +
+          heroPower.toString() +
           ' ' +
-          power +
+          power.toString() +
           '.';
+    } else if (heroPower == opponentPower) {
+      return 'Tie! With ' + heroPower.toString() + ' in ' + power+'.';
     } else {
       return opponent.name +
           ' won the fight! With ' +
-          opponent.powerstats[power] +
+          opponentPower.toString() +
           ' ' +
           power +
           '.';
@@ -293,6 +309,30 @@ class Hero {
     }
 
     var powerstatsMap = json['powerstats'];
+
+    if (powerstatsMap == null) {
+      powerstatsMap = [
+        {
+          'intelligence': '0',
+        },
+        {
+          'power': '0',
+        },
+        {
+          'speed': '0',
+        },
+        {
+          'durability': '0',
+        },
+        {
+          'combat': '0',
+        },
+        {
+          'strength': '0',
+        }
+      ];
+    }
+
     return Hero(name: json['name'], image: imageUrl, powerstats: powerstatsMap);
   }
 }
