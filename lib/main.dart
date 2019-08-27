@@ -54,6 +54,13 @@ class HeroState extends State<HeroList> {
   }
 
   void _showFight() {
+    String text = '';
+    if(fighter.length < 2) {
+      text = "Please choose two Heroes to fight.";
+    } else {
+      text = fighter.elementAt(0).fight(fighter.elementAt(1));
+    }
+
     showDialog<Null>(
       context: context,
       barrierDismissible: false,
@@ -63,7 +70,7 @@ class HeroState extends State<HeroList> {
           content: new SingleChildScrollView(
             child: new ListBody(
               children: <Widget>[
-                new Text(fighter.elementAt(0).fight(fighter.elementAt(1))),
+                new Text(text),
               ],
             ),
           ),
@@ -303,13 +310,11 @@ class Hero {
   factory Hero.fromJson(Map<String, dynamic> json) {
     var imageMap = json['image'].values.toList();
     var imageUrl = imageMap[0];
-
     if (imageUrl == null) {
       imageUrl = 'https://via.placeholder.com/150';
     }
 
     var powerstatsMap = json['powerstats'];
-
     if (powerstatsMap == null) {
       powerstatsMap = [
         {
