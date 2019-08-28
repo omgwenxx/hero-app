@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Tue Aug 27 17:37:03 CEST 2019
+#Wed Aug 28 15:10:39 CEST 2019
 4.path=lib/x86_64/libflutter.so
 8.set=ASSET
 6.path=flutter_assets/fonts/MaterialIcons-Regular.ttf

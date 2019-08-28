@@ -22,14 +22,13 @@ class MyApp extends StatelessWidget {
 }
 
 class HeroState extends State<HeroList> {
-  Future<List<Hero>> heroesFuture;
   Set<Hero> fighter = Set<Hero>();
   final _biggerFont = const TextStyle(fontSize: 20.0);
+  bool isPerformingRequest = false;
 
   @override
   void initState() {
     super.initState();
-    heroesFuture = generateHeroes();
   }
 
   @override
@@ -49,13 +48,15 @@ class HeroState extends State<HeroList> {
                   onPressed: _showFight,
                 )
               ])),
-      body: _buildHeroes(),
+      body: ListView.builder(
+          itemBuilder: (BuildContext ctxt, int index) =>
+              buildListElement(ctxt, index)),
     );
   }
 
   void _showFight() {
     String text = '';
-    if(fighter.length < 2) {
+    if (fighter.length < 2) {
       text = "Please choose two Heroes to fight.";
     } else {
       text = fighter.elementAt(0).fight(fighter.elementAt(1));
@@ -89,7 +90,7 @@ class HeroState extends State<HeroList> {
 
   Widget _buildHeroes() {
     return FutureBuilder(
-      future: heroesFuture,
+      future: generateHeroes(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -120,33 +121,10 @@ class HeroState extends State<HeroList> {
     );
   }
 
-  /*
-  Widget _buildHeroes() {
-    return ListView.builder(
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return FutureBuilder(
-            future: generateHero(),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return _buildRow(snapshot.data);
-                  }
-              }
-            },
-          );
-        });
-  }*/
-
   Widget _buildRow(Hero hero) {
     final bool alreadySaved = fighter.contains(hero);
     final font = const TextStyle(fontSize: 20.0, color: Colors.white);
+
     return ListTile(
         leading: GestureDetector(
           onTap: () {
@@ -215,9 +193,10 @@ class HeroState extends State<HeroList> {
             fit: BoxFit.cover,
           )),
         ),
+        contentPadding: const EdgeInsets.only(top: 10),
         title: Text(hero.name, style: _biggerFont),
         trailing: Icon(
-          alreadySaved ? Icons.add_circle : Icons.add_circle_outline,
+          alreadySaved ? Icons.check : Icons.add_circle_outline,
         ),
         onTap: () {
           setState(() {
@@ -227,6 +206,22 @@ class HeroState extends State<HeroList> {
               fighter.add(hero);
             }
           });
+        });
+  }
+
+  Widget buildListElement(BuildContext ctxt, int index) {
+    return FutureBuilder(
+        future: generateHero(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return _buildRow(snapshot.data);
+          } else {
+            return Padding(
+                padding: EdgeInsets.only(top:10, bottom:10),
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator()));
+          }
         });
   }
 }
@@ -296,7 +291,7 @@ class Hero {
           power.toString() +
           '.';
     } else if (heroPower == opponentPower) {
-      return 'Tie! With ' + heroPower.toString() + ' in ' + power+'.';
+      return 'Tie! With ' + heroPower.toString() + ' in ' + power + '.';
     } else {
       return opponent.name +
           ' won the fight! With ' +
